@@ -25,8 +25,6 @@ void setup()
 void loop()
 { Blynk.virtualWrite(V0, x);
   Blynk.virtualWrite(V1, y);
-
-
   Blynk.run();
   x = x + 2;
   y = y + 3;
