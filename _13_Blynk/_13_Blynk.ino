@@ -28,7 +28,7 @@ void loop()
 
 
   Blynk.run();
-  x = x +2;
+  x = x + 2;
   y = y + 3;
   delay(4000);
 }
