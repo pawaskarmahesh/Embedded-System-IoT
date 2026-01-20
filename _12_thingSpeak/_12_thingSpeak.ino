@@ -1,13 +1,15 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include "DHT.h"
 
+#define DHTPIN 13
+float h, t;
 
 const char* ssid = "Mahesh";
 const char* password = "87654321";
-int x, y;
+#define DHTTYPE DHT11
 
-String serverName = "https://api.thingspeak.com/update?api_key=Q2TLQ2JA6RXHKWUY";
-
+String serverName = "https://api.thingspeak.com/update?api_key=XCMB6EVEZX23R1WH";
 
 unsigned long lastTime = 0;
 const unsigned long timerDelay = 5000; // 3 seconds delay
@@ -15,10 +17,9 @@ const unsigned long timerDelay = 5000; // 3 seconds delay
 WiFiClient client;
 HTTPClient http;
 
+DHT dht(DHTPIN, DHTTYPE);
 void setup() {
   Serial.begin(115200);
-  x = 5;
-  y = 12;
   WiFi.begin(ssid, password);
   Serial.println("Connecting to WiFi...");
   while (WiFi.status() != WL_CONNECTED) {
@@ -30,14 +31,26 @@ void setup() {
   Serial.print("Connected to WiFi, IP Address: ");
   Serial.println(WiFi.localIP());
   Serial.println("Timer set to 10 seconds. It will take 10 seconds before publishing the first reading.");
+  Serial.println(F("DHT11 test!"));
+  dht.begin();
 }
 
 void loop() {
   if (millis() - lastTime >= timerDelay) {
     if (WiFi.status() == WL_CONNECTED) {
-      x = x + 2;
-      y = y + 3;
-      String serverPath = serverName + "&field1=" + String(x) + "&field2=" + String(y);
+      h = dht.readHumidity();
+      t = dht.readTemperature();
+      if(isnan(h) || isnan(t)) {
+        h = 100;
+        t = 150;
+        Serial.println(F("Failed to read from DHT sensor!"));
+        //return;
+      }
+
+      String serverPath = serverName + "&field1=" + String(h) + "&field2=" + String(t);
+
+      Serial.print("Humidity = ");  Serial.print(h);
+      Serial.print(" Tempearture = ");  Serial.println(t); 
 
       http.begin(serverPath);
       int httpResponseCode = http.GET();
