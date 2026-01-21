@@ -12,7 +12,7 @@
 #define DATABASE_URL "https://smart-b4d0a-default-rtdb.firebaseio.com/" 
 #define FIREBASE_PROJECT_ID "smart-b4d0a"
 #define DHTPIN 13
-#define DHTTYPE DHT22
+#define DHTTYPE DHT11
 float h, t;
 FirebaseData fbdo;
 FirebaseAuth auth;
